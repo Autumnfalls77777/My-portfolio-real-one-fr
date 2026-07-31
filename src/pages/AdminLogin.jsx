@@ -66,14 +66,15 @@ export default function AdminLogin() {
               <div className="relative">
                 <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-obsidian/30" />
                 <input
-                  type="text"
+                  type="email"
+                  name="admin_email_field"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@prabal.dev"
+                  placeholder="Enter admin email"
                   className="w-full pl-10 pr-4 py-3 text-sm bg-white border border-sand rounded-xl outline-none focus:border-obsidian focus:ring-2 focus:ring-obsidian/10"
                   required
                   maxLength={100}
-                  autoComplete="username"
+                  autoComplete="off"
                 />
               </div>
             </div>
@@ -85,13 +86,14 @@ export default function AdminLogin() {
                 <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-obsidian/30" />
                 <input
                   type={showPassword ? 'text' : 'password'}
+                  name="admin_pass_field"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="w-full pl-10 pr-11 py-3 text-sm bg-white border border-sand rounded-xl outline-none focus:border-obsidian focus:ring-2 focus:ring-obsidian/10"
                   required
                   maxLength={200}
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                 />
                 <button
                   type="button"
@@ -111,13 +113,14 @@ export default function AdminLogin() {
                 <KeyRound size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-obsidian/30" />
                 <input
                   type="password"
+                  name="admin_code_field"
                   value={accessCode}
                   onChange={(e) => setAccessCode(e.target.value)}
                   placeholder="Secret access code"
                   className="w-full pl-10 pr-4 py-3 text-sm bg-white border border-sand rounded-xl outline-none focus:border-obsidian focus:ring-2 focus:ring-obsidian/10"
                   required
                   maxLength={200}
-                  autoComplete="one-time-code"
+                  autoComplete="off"
                 />
               </div>
             </div>
