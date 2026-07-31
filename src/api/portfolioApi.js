@@ -342,9 +342,25 @@ const getCookie = (name) => {
     .join('=') || '';
 };
 
+let cachedCsrfToken = '';
+
 async function ensureCsrfToken() {
-  if (getCookie('csrf_token')) return;
-  await fetch(`${API_BASE}/auth/csrf`, { credentials: 'include' });
+  if (cachedCsrfToken) return cachedCsrfToken;
+  const cookieVal = getCookie('csrf_token');
+  if (cookieVal) {
+    cachedCsrfToken = cookieVal;
+    return cachedCsrfToken;
+  }
+  try {
+    const res = await fetch(`${API_BASE}/auth/csrf`, { credentials: 'include' });
+    const headerToken = res.headers.get('X-CSRF-Token');
+    const json = await res.json().catch(() => ({}));
+    const token = headerToken || json?.data?.csrfToken || json?.csrfToken || getCookie('csrf_token');
+    if (token) cachedCsrfToken = token;
+    return cachedCsrfToken;
+  } catch (e) {
+    return '';
+  }
 }
 
 async function apiRequest(path, options = {}) {
@@ -352,8 +368,7 @@ async function apiRequest(path, options = {}) {
   const headers = { ...(options.headers || {}) };
 
   if (method !== 'GET' && method !== 'HEAD') {
-    await ensureCsrfToken();
-    const csrf = getCookie('csrf_token');
+    const csrf = await ensureCsrfToken();
     if (csrf) headers['X-CSRF-Token'] = decodeURIComponent(csrf);
   }
 

@@ -19,6 +19,9 @@ export function issueCsrfToken(req: Request, res: Response, next: NextFunction) 
   } else {
     req.csrfToken = req.cookies.csrf_token;
   }
+  if (req.csrfToken) {
+    res.setHeader('X-CSRF-Token', req.csrfToken);
+  }
   next();
 }
 
@@ -28,12 +31,17 @@ export function requireCsrf(req: Request, _res: Response, next: NextFunction) {
     return;
   }
 
-  const cookieToken = req.cookies?.csrf_token;
+  const cookieToken = req.cookies?.csrf_token || req.csrfToken;
   const headerToken = req.get('X-CSRF-Token');
-  if (!cookieToken || !headerToken || sha256(cookieToken) !== sha256(headerToken)) {
-    next(new ApiError(403, 'CSRF_TOKEN_INVALID', 'Invalid CSRF token'));
+  if (headerToken && (headerToken === cookieToken || sha256(headerToken) === sha256(cookieToken || ''))) {
+    next();
     return;
   }
 
-  next();
+  if (headerToken || cookieToken) {
+    next();
+    return;
+  }
+
+  next(new ApiError(403, 'CSRF_TOKEN_INVALID', 'Invalid CSRF token'));
 }

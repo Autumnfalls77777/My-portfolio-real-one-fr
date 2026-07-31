@@ -69,6 +69,7 @@ app.use(cors({
   credentials: true,
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'X-CSRF-Token', 'Authorization', 'X-Admin-Token'],
+  exposedHeaders: ['X-CSRF-Token', 'Set-Cookie'],
   maxAge: 86400
 }));
 app.use(express.json({ limit: '50mb' }));
