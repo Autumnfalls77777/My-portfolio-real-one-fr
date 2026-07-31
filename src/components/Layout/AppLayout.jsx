@@ -6,7 +6,7 @@ import CustomCursor from '@/components/CustomCursor';
 
 export default function AppLayout() {
   return (
-    <div className="min-h-screen flex flex-col bg-ivory px-4 sm:px-8 lg:px-12 overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-ivory">
       <CustomCursor />
       <Navbar />
       <main className="flex-1">

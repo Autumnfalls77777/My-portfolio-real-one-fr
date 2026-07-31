@@ -81,6 +81,7 @@ export default function HeroSection() {
   }, []);
 
   const handleDragEnd = (key, info) => {
+    if (!isAdminUser) return;
     const offsetX = Math.round(info.offset.x);
     const offsetY = Math.round(info.offset.y);
 
@@ -100,9 +101,7 @@ export default function HeroSection() {
       } catch (e) {}
       return updated;
     });
-    if (isAdminUser) {
-      setHasUnsavedChanges(true);
-    }
+    setHasUnsavedChanges(true);
   };
 
   const handleSavePositions = async () => {
@@ -140,7 +139,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section id="home" className="relative min-h-screen grid-bg noise-bg overflow-hidden">
+    <section id="home" className="relative min-h-screen grid-bg noise-bg overflow-x-clip">
       <div className="relative z-10 max-w-[1440px] mx-auto px-6 pt-28 pb-16 lg:pt-32">
         {/* Ghost text */}
         <div className="absolute top-20 left-6 text-[12rem] font-heading font-bold ghost-text select-none pointer-events-none leading-none hidden xl:block">
@@ -213,10 +212,11 @@ export default function HeroSection() {
 
               {/* Spotify Card */}
               <motion.div
-                className="absolute -top-4 -right-8 z-20 cursor-grab active:cursor-grabbing select-none"
+                className="absolute -top-4 right-2 z-20 cursor-grab active:cursor-grabbing select-none"
                 drag={true}
+                dragSnapToOrigin={!isAdminUser}
                 dragMomentum={false}
-                dragElastic={0}
+                dragElastic={0.3}
                 initial={false}
                 animate={{
                   x: positions.spotify?.x || 0,
@@ -232,10 +232,11 @@ export default function HeroSection() {
 
               {/* Discord Card */}
               <motion.div
-                className="absolute bottom-28 -right-12 z-20 cursor-grab active:cursor-grabbing select-none"
+                className="absolute bottom-24 right-2 z-20 cursor-grab active:cursor-grabbing select-none"
                 drag={true}
+                dragSnapToOrigin={!isAdminUser}
                 dragMomentum={false}
-                dragElastic={0}
+                dragElastic={0.3}
                 initial={false}
                 animate={{
                   x: positions.discord?.x || 0,
@@ -251,10 +252,11 @@ export default function HeroSection() {
 
               {/* Current Project Widget */}
               <motion.div
-                className="absolute top-52 left-16 z-20 cursor-grab active:cursor-grabbing select-none"
+                className="absolute top-48 left-12 z-20 cursor-grab active:cursor-grabbing select-none"
                 drag={true}
+                dragSnapToOrigin={!isAdminUser}
                 dragMomentum={false}
-                dragElastic={0}
+                dragElastic={0.3}
                 initial={false}
                 animate={{
                   x: positions.currentProject?.x || 0,
@@ -270,10 +272,11 @@ export default function HeroSection() {
 
               {/* GitHub Card */}
               <motion.div
-                className="absolute top-24 left-2 z-20 cursor-grab active:cursor-grabbing select-none"
+                className="absolute top-20 left-2 z-20 cursor-grab active:cursor-grabbing select-none"
                 drag={true}
+                dragSnapToOrigin={!isAdminUser}
                 dragMomentum={false}
-                dragElastic={0}
+                dragElastic={0.3}
                 initial={false}
                 animate={{
                   x: positions.github?.x || 0,
@@ -289,10 +292,11 @@ export default function HeroSection() {
 
               {/* Steam Card */}
               <motion.div
-                className="absolute bottom-24 -left-24 z-20 cursor-grab active:cursor-grabbing select-none"
+                className="absolute bottom-24 left-2 z-20 cursor-grab active:cursor-grabbing select-none"
                 drag={true}
+                dragSnapToOrigin={!isAdminUser}
                 dragMomentum={false}
-                dragElastic={0}
+                dragElastic={0.3}
                 initial={false}
                 animate={{
                   x: positions.steam?.x || 0,
