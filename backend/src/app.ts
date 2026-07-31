@@ -115,10 +115,10 @@ app.use(`${apiPrefix}/settings`, settingsRouter);
 app.use(`${apiPrefix}/steam`, steamRouter);
 app.use(`${apiPrefix}/admin`, adminRouter);
 
-// Serve static compiled frontend assets if dist directory exists
+// Serve static compiled frontend assets if index.html exists in dist directory
 const distPath = path.resolve(process.cwd(), '../dist');
 const localDistPath = path.resolve(process.cwd(), 'dist');
-const activeDist = fs.existsSync(distPath) ? distPath : (fs.existsSync(localDistPath) ? localDistPath : null);
+const activeDist = [distPath, localDistPath].find((p) => fs.existsSync(path.resolve(p, 'index.html')));
 
 if (activeDist) {
   app.use(express.static(activeDist));
@@ -127,7 +127,15 @@ if (activeDist) {
     res.sendFile(path.resolve(activeDist, 'index.html'));
   });
 } else {
-  app.use(notFound);
+  app.get('/', (_req, res) => {
+    res.json({
+      status: 'ok',
+      message: 'Portfolio Backend API Service is active',
+      version: env.APP_VERSION,
+      health: '/health',
+      api: apiPrefix,
+    });
+  });
 }
 
 app.use(errorHandler);
