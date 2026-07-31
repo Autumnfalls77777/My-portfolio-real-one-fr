@@ -1,0 +1,72 @@
+﻿{
+  "name": "CareerExperience",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "company": {
+      "type": "string"
+    },
+    "company_logo": {
+      "type": "string",
+      "format": "file_url"
+    },
+    "duration": {
+      "type": "string"
+    },
+    "start_date": {
+      "type": "string"
+    },
+    "end_date": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string"
+    },
+    "is_internship": {
+      "type": "boolean",
+      "default": false
+    },
+    "description": {
+      "type": "string"
+    },
+    "learnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "recommended": {
+      "type": "boolean",
+      "default": false
+    },
+    "recommendation_text": {
+      "type": "string"
+    },
+    "recommendation_author": {
+      "type": "string"
+    },
+    "recommendation_role": {
+      "type": "string"
+    },
+    "order": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "title",
+    "company",
+    "description"
+  ]
+}

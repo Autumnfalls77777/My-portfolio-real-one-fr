@@ -1,0 +1,122 @@
+﻿{
+  "name": "DesignProject",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string"
+    },
+    "client": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Branding",
+        "Packaging",
+        "Posters",
+        "Social Media",
+        "UI/UX",
+        "Print",
+        "Illustrations",
+        "Reels",
+        "Banners",
+        "Large Format"
+      ]
+    },
+    "team_project": {
+      "type": "boolean",
+      "default": false
+    },
+    "software_used": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "string"
+    },
+    "personal_note": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "thumbnail": {
+      "type": "string",
+      "format": "file_url"
+    },
+    "gallery": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "file_url"
+      }
+    },
+    "overview": {
+      "type": "string"
+    },
+    "challenges": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "process": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "color_palette": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "hex": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "typography_specs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "usage": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "learnings": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "description"
+  ]
+}

@@ -1,0 +1,114 @@
+﻿{
+  "name": "SoftwareProject",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "project_type": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "Frontend",
+        "Backend",
+        "AI",
+        "Web",
+        "Desktop"
+      ]
+    },
+    "completion_date": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "Live",
+        "Open Source",
+        "In Progress",
+        "Archived"
+      ],
+      "default": "In Progress"
+    },
+    "tech_stack": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "description": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string"
+    },
+    "team_project": {
+      "type": "boolean",
+      "default": false
+    },
+    "github_url": {
+      "type": "string"
+    },
+    "live_demo_url": {
+      "type": "string"
+    },
+    "personal_notes": {
+      "type": "string"
+    },
+    "thumbnail": {
+      "type": "string",
+      "format": "file_url"
+    },
+    "complexity": {
+      "type": "number"
+    },
+    "screenshots": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "format": "file_url"
+      }
+    },
+    "overview": {
+      "type": "string"
+    },
+    "problem_statement": {
+      "type": "string"
+    },
+    "solution": {
+      "type": "string"
+    },
+    "features": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "detailed_tech_stack": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "architecture": {
+      "type": "string"
+    },
+    "challenges": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "future_improvements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "title",
+    "description"
+  ]
+}

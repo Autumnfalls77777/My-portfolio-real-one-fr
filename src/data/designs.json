@@ -1,0 +1,8 @@
+{
+  "hero": {
+    "title": "Design Portfolio",
+    "intro": "A curated archive of creative work spanning brand identity, packaging, editorial design, and digital interfaces.",
+    "stats": []
+  },
+  "categories": ["All", "Branding", "Packaging", "Posters", "Social Media", "UI/UX", "Print", "Illustrations", "Reels", "Banners", "Large Format"]
+}

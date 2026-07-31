@@ -1,0 +1,161 @@
+{
+  "meta": {
+    "name": "Prabal",
+    "title": "Graphic Designer & Creative Developer",
+    "tagline": "Crafting digital experiences at the intersection of design and code.",
+    "email": "prabaljaiswal69420@gmail.com",
+    "github": "https://github.com/Autumnfalls77777",
+    "discord": "itzpal101",
+    "instagram": "https://instagram.com/itzpal101"
+  },
+  "hero": {
+    "greeting": "Hi.",
+    "name": "I'm Prabal.",
+    "roles": [
+      "Graphic Designer.",
+      "Creative Developer.",
+      "Problem Solver."
+    ],
+    "intro": "I design and build digital experiences that live at the intersection of aesthetics and engineering. Every pixel has purpose, every line of code tells a story."
+  },
+  "about": {
+    "story": [
+      "I'm a multidisciplinary creative who believes the best digital experiences are born when design thinking meets engineering precision.",
+      "From crafting brand identities that resonate to building full-stack applications that scale — I approach every project as both an artist and an architect.",
+      "My journey started with a curiosity for visual storytelling and evolved into a deep passion for turning complex problems into elegant, intuitive solutions."
+    ],
+    "stats": [
+      { "label": "Projects Completed", "value": 48 },
+      { "label": "Designs Created", "value": 200 },
+      { "label": "Organizations", "value": 6 },
+      { "label": "Years Learning", "value": 5 },
+      { "label": "Happy Clients", "value": 32 }
+    ]
+  },
+  "expertise": [
+    { "title": "Graphic Design", "description": "Visual storytelling through composition, color theory, and typography that commands attention.", "icon": "Palette" },
+    { "title": "Packaging Design", "description": "Tangible brand experiences that stand out on shelves and create lasting impressions.", "icon": "Package" },
+    { "title": "Brand Identity", "description": "Complete visual systems that define how brands look, feel, and communicate.", "icon": "Fingerprint" },
+    { "title": "UI/UX Design", "description": "Intuitive interfaces grounded in user research, accessibility, and design systems.", "icon": "Layout" },
+    { "title": "Social Media", "description": "Scroll-stopping content strategies and visual campaigns that drive engagement.", "icon": "Share2" },
+    { "title": "Frontend Development", "description": "Pixel-perfect implementations with React, responsive design, and smooth animations.", "icon": "Code" },
+    { "title": "Backend Development", "description": "Scalable APIs and server architectures with Python, Node.js, and databases.", "icon": "Server" },
+    { "title": "AI Projects", "description": "Machine learning experiments and AI-powered tools that solve real-world problems.", "icon": "Brain" }
+  ],
+  "programming": [
+    { "name": "Python", "experience": "4 years", "projects": 18, "confidence": 92 },
+    { "name": "JavaScript", "experience": "3 years", "projects": 22, "confidence": 88 },
+    { "name": "React", "experience": "2 years", "projects": 14, "confidence": 85 },
+    { "name": "Java", "experience": "3 years", "projects": 8, "confidence": 75 },
+    { "name": "C/C++", "experience": "3 years", "projects": 10, "confidence": 70 },
+    { "name": "HTML/CSS", "experience": "5 years", "projects": 30, "confidence": 95 },
+    { "name": "FastAPI", "experience": "2 years", "projects": 6, "confidence": 80 },
+    { "name": "Node.js", "experience": "2 years", "projects": 8, "confidence": 78 }
+  ],
+  "showcase": [
+    { "id": 1, "title": "Poster Series", "category": "Poster Designs" },
+    { "id": 2, "title": "Luxe Packaging", "category": "Packaging" },
+    { "id": 3, "title": "Nova Brand", "category": "Brand Identity" },
+    { "id": 4, "title": "Feed Design", "category": "Social Media" },
+    { "id": 5, "title": "Product Viz", "category": "3D Mockups" },
+    { "id": 6, "title": "Dashboard UI", "category": "UI/UX" }
+  ],
+  "achievements": [
+    { "year": "2024", "title": "IEEE Paper Published", "description": "Research paper on AI-driven design systems accepted at IEEE conference.", "type": "publication" },
+    { "year": "2024", "title": "Hackathon Winner", "description": "First place at National Design+Code Hackathon with an AI-powered branding tool.", "type": "award" },
+    { "year": "2023", "title": "Creative Head — Design Club", "description": "Led a team of 20 designers, organized workshops and design sprints.", "type": "leadership" },
+    { "year": "2023", "title": "UI/UX Competition Finalist", "description": "Top 5 nationally in the InterCollege UI/UX design challenge.", "type": "competition" },
+    { "year": "2022", "title": "Google UX Design Certificate", "description": "Completed the professional certificate program in UX Design.", "type": "certification" },
+    { "year": "2022", "title": "Open Source Contributor", "description": "Contributed to 3 major open-source design system repositories.", "type": "contribution" }
+  ],
+  "projects": [
+    {
+      "title": "BrandForge AI",
+      "description": "An AI-powered branding tool that generates complete visual identities — logos, color palettes, typography pairings, and brand guidelines — from a single text prompt.",
+      "tech": ["React", "FastAPI", "Python", "OpenAI", "Figma API"],
+      "github": "https://github.com/prabal/brandforge",
+      "caseStudy": "/projects/brandforge"
+    },
+    {
+      "title": "DesignFlow CMS",
+      "description": "A headless CMS built specifically for design portfolios. Drag-and-drop layout builder, real-time collaboration, and automated image optimization.",
+      "tech": ["Next.js", "Node.js", "PostgreSQL", "AWS S3"],
+      "github": "https://github.com/prabal/designflow",
+      "caseStudy": "/projects/designflow"
+    },
+    {
+      "title": "PackViz 3D",
+      "description": "A web-based 3D packaging mockup generator. Upload your design, choose a template, and get photorealistic 3D renders in seconds.",
+      "tech": ["Three.js", "React", "WebGL", "Python"],
+      "github": "https://github.com/prabal/packviz",
+      "caseStudy": "/projects/packviz"
+    }
+  ],
+  "testimonials": [
+    {
+      "quote": "Prabal doesn't just design — he architects experiences. His ability to think in both pixels and code is rare and incredibly valuable.",
+      "author": "Sarah Chen",
+      "role": "Product Manager, TechCorp"
+    },
+    {
+      "quote": "Working with Prabal was a game-changer for our brand. He understood our vision instantly and delivered designs that exceeded every expectation.",
+      "author": "Marcus Rivera",
+      "role": "Founder, Nova Studio"
+    },
+    {
+      "quote": "The attention to detail is unmatched. Every interaction, every transition, every color choice — everything has intention behind it.",
+      "author": "Aisha Patel",
+      "role": "Creative Director, DesignLab"
+    }
+  ],
+  "techStack": {
+    "development": [
+      { "name": "React", "color": "#61DAFB" },
+      { "name": "Node.js", "color": "#339933" },
+      { "name": "FastAPI", "color": "#009688" },
+      { "name": "Python", "color": "#3776AB" }
+    ],
+    "design": [
+      { "name": "Photoshop", "color": "#31A8FF" },
+      { "name": "Illustrator", "color": "#FF9A00" },
+      { "name": "Figma", "color": "#F24E1E" },
+      { "name": "After Effects", "color": "#9999FF" },
+      { "name": "CorelDRAW", "color": "#72B539" }
+    ]
+  },
+  "apiCards": {
+    "spotify": {
+      "type": "Spotify",
+      "status": "Currently Playing",
+      "title": "Blinding Lights",
+      "artist": "The Weeknd",
+      "album": "After Hours",
+      "progress": 65
+    },
+    "discord": {
+      "type": "Discord",
+      "username": "prabal_",
+      "status": "Online",
+      "activity": "Working on Portfolio",
+      "servers": 12
+    },
+    "github": {
+      "type": "GitHub",
+      "repos": 34,
+      "followers": 128,
+      "latestCommit": "feat: add dark mode toggle",
+      "contributions": [3, 5, 2, 8, 4, 7, 1, 6, 9, 3, 5, 2, 7, 4, 8, 1, 6, 3, 5, 9, 2, 4, 7, 1, 8, 3, 6, 5]
+    },
+    "steam": {
+      "type": "Steam",
+      "game": "Cyberpunk 2077",
+      "hours": 142,
+      "status": "Online"
+    }
+  },
+  "widgets": {
+    "currentProject": { "name": "Portfolio v3", "progress": 72, "status": "In Progress" },
+    "codingStreak": { "days": 47, "label": "Day Streak" },
+    "coffeeCounter": { "count": 3, "label": "Coffees Today" }
+  }
+}

@@ -1,0 +1,36 @@
+﻿{
+  "name": "FeaturedProject",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "tech": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "github_url": {
+      "type": "string"
+    },
+    "case_study_url": {
+      "type": "string"
+    },
+    "image_url": {
+      "type": "string",
+      "format": "file_url"
+    },
+    "order": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "title",
+    "description"
+  ]
+}

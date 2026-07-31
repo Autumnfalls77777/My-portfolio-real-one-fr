@@ -1,0 +1,25 @@
+﻿{
+  "name": "Language",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "experience": {
+      "type": "string"
+    },
+    "projects": {
+      "type": "number"
+    },
+    "confidence": {
+      "type": "number"
+    },
+    "order": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

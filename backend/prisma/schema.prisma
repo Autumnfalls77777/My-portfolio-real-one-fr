@@ -1,0 +1,549 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String               @id @default(uuid())
+  email               String               @unique
+  name                String?
+  passwordHash        String
+  role                String               @default("USER")
+  isEmailVerified     Boolean              @default(false)
+  lastLoginAt         DateTime?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  deletedAt           DateTime?
+  media               Media[]
+  refreshTokens       RefreshToken[]
+  auditLogs           AuditLog[]
+  passwordResetTokens PasswordResetToken[]
+  otpCodes            OtpCode[]
+
+  @@index([role])
+  @@index([createdAt])
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String
+  expiresAt DateTime
+  revokedAt DateTime?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model OtpCode {
+  id         String    @id @default(uuid())
+  userId     String?
+  email      String
+  codeHash   String
+  purpose    String
+  attempts   Int       @default(0)
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+  user       User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([email, purpose])
+  @@index([expiresAt])
+}
+
+model Media {
+  id                 String                 @id @default(uuid())
+  cloudinaryId       String                 @unique
+  url                String
+  secureUrl          String
+  resourceType       String                 @default("IMAGE")
+  format             String?
+  mimeType           String?
+  width              Int?
+  height             Int?
+  bytes              Float?
+  duration           Float?
+  altText            String?
+  caption            String?
+  folder             String
+  uploadedById       String?
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+  uploadedBy         User?                  @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+  softwareThumbnails SoftwareProject[]      @relation("SoftwareThumbnail")
+  softwareOgImages   SoftwareProject[]      @relation("SoftwareOgImage")
+  designThumbnails   DesignProject[]        @relation("DesignThumbnail")
+  designOgImages     DesignProject[]        @relation("DesignOgImage")
+  softwareGallery    SoftwareProjectMedia[]
+  designGallery      DesignProjectMedia[]
+  certificates       Certificate[]
+  resumes            ResumeDocument[]
+  offerLetters       OfferLetter[]
+  showcaseItems      ShowcaseItem[]
+
+  @@index([folder])
+  @@index([resourceType])
+  @@index([createdAt])
+}
+
+model SiteSettings {
+  id           String   @id @default(uuid())
+  key          String   @unique @default("global")
+  heroImageUrl String?
+  heroAltText  String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Tag {
+  id          String                @id @default(uuid())
+  name        String                @unique
+  slug        String                @unique
+  color       String?
+  status      String                @default("PUBLISHED")
+  publishedAt DateTime?
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+  deletedAt   DateTime?
+  software    SoftwareProjectTag[]
+
+  @@index([slug])
+}
+
+model SoftwareProject {
+  id                 String                 @id @default(uuid())
+  title              String
+  slug               String                 @unique
+  description        String
+  shortDescription   String?
+  category           String?
+  status             String                 @default("DRAFT")
+  featured           Boolean                @default(false)
+  complexity         String?
+  githubUrl          String?
+  liveDemoUrl        String?
+  problemStatement   String?
+  solution           String?
+  features           String                 @default("[]")
+  challenges         String                 @default("[]")
+  futureImprovements String                 @default("[]")
+  techStack          String                 @default("[]")
+  thumbnailUrl       String?
+  completionDate     DateTime?
+  displayDate        String?
+  viewCount          Int                    @default(0)
+  order              Int                    @default(0)
+  seoTitle           String?
+  seoDescription     String?
+  seoKeywords        String                 @default("[]")
+  canonicalUrl       String?
+  thumbnailId        String?
+  ogImageId          String?
+  publishedAt        DateTime?
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
+  deletedAt          DateTime?
+  thumbnail          Media?                 @relation("SoftwareThumbnail", fields: [thumbnailId], references: [id], onDelete: SetNull)
+  ogImage            Media?                 @relation("SoftwareOgImage", fields: [ogImageId], references: [id], onDelete: SetNull)
+  tags               SoftwareProjectTag[]
+  media              SoftwareProjectMedia[]
+
+  @@index([slug])
+  @@index([status])
+  @@index([featured])
+  @@index([category])
+  @@index([publishedAt])
+  @@index([createdAt])
+}
+
+model SoftwareProjectTag {
+  projectId String
+  tagId     String
+  project   SoftwareProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tag       Tag             @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, tagId])
+}
+
+model SoftwareProjectMedia {
+  projectId String
+  mediaId   String
+  role      String          @default("GALLERY")
+  order     Int             @default(0)
+  project   SoftwareProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  media     Media           @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, mediaId, role])
+  @@index([order])
+}
+
+model DesignProject {
+  id               String               @id @default(uuid())
+  title            String
+  slug             String               @unique
+  description      String
+  shortDescription String?
+  category         String?
+  status           String               @default("DRAFT")
+  featured         Boolean              @default(false)
+  client           String?
+  designProcess    String               @default("[]")
+  softwareUsed     String               @default("[]")
+  colorPalette     String               @default("[]")
+  typographySpecs  String?
+  learnings        String               @default("[]")
+  tags             String               @default("[]")
+  thumbnailUrl     String?
+  caseStudyUrl     String?
+  completionDate   DateTime?
+  displayDate      String?
+  viewCount        Int                  @default(0)
+  order            Int                  @default(0)
+  seoTitle         String?
+  seoDescription   String?
+  seoKeywords      String               @default("[]")
+  canonicalUrl     String?
+  thumbnailId      String?
+  ogImageId        String?
+  publishedAt      DateTime?
+  createdAt        DateTime             @default(now())
+  updatedAt        DateTime             @updatedAt
+  deletedAt        DateTime?
+  thumbnail        Media?               @relation("DesignThumbnail", fields: [thumbnailId], references: [id], onDelete: SetNull)
+  ogImage          Media?               @relation("DesignOgImage", fields: [ogImageId], references: [id], onDelete: SetNull)
+  media            DesignProjectMedia[]
+
+  @@index([slug])
+  @@index([status])
+  @@index([featured])
+  @@index([category])
+  @@index([publishedAt])
+  @@index([createdAt])
+}
+
+model DesignProjectMedia {
+  projectId String
+  mediaId   String
+  role      String        @default("GALLERY")
+  order     Int           @default(0)
+  project   DesignProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  media     Media         @relation(fields: [mediaId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, mediaId, role])
+  @@index([order])
+}
+
+model DesignCollection {
+  id          String    @id @default(uuid())
+  code        String    @unique
+  slug        String?   @unique
+  label       String
+  order       Int       @default(0)
+  status      String    @default("PUBLISHED")
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@index([code])
+}
+
+model BrandCard {
+  id           String    @id @default(uuid())
+  name         String
+  slug         String    @unique
+  collectionId String    @default("01")
+  year         String?
+  worksCount   Int       @default(0)
+  brandType    String?
+  role         String?
+  overview     String?
+  isHot        Boolean   @default(false)
+  order        Int       @default(0)
+  status       String    @default("PUBLISHED")
+  publishedAt  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  @@index([slug])
+  @@index([collectionId])
+}
+
+model BrandWork {
+  id          String    @id @default(uuid())
+  brandSlug   String
+  slug        String?   @unique
+  title       String
+  description String?
+  category    String?
+  year        String?
+  imageUrl    String?
+  order       Int       @default(0)
+  status      String    @default("PUBLISHED")
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@index([brandSlug])
+}
+
+model CareerExperience {
+  id                   String    @id @default(uuid())
+  title                String
+  slug                 String    @unique
+  company              String
+  companyLogoUrl       String?
+  employmentType       String    @default("FULL_TIME")
+  isInternship         Boolean   @default(false)
+  duration             String?
+  startDate            DateTime?
+  endDate              DateTime?
+  location             String?
+  description          String
+  learnings            String    @default("[]")
+  skills               String    @default("[]")
+  recommended          Boolean   @default(false)
+  recommendationText   String?
+  recommendationAuthor String?
+  recommendationRole   String?
+  status               String    @default("PUBLISHED")
+  order                Int       @default(0)
+  publishedAt          DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  deletedAt            DateTime?
+
+  @@index([slug])
+  @@index([status])
+  @@index([order])
+}
+
+model Certificate {
+  id            String    @id @default(uuid())
+  title         String
+  slug          String    @unique
+  category      String
+  issuer        String?
+  issuedAt      DateTime?
+  displayDate   String?
+  description   String?
+  credentialUrl String?
+  mediaId       String?
+  featured      Boolean   @default(false)
+  status        String    @default("PUBLISHED")
+  order         Int       @default(0)
+  publishedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+  media         Media?    @relation(fields: [mediaId], references: [id], onDelete: SetNull)
+
+  @@index([slug])
+  @@index([category])
+  @@index([featured])
+  @@index([status])
+}
+
+model ResumeDocument {
+  id            String    @id @default(uuid())
+  title         String
+  slug          String    @unique
+  type          String    @default("RESUME")
+  version       String?
+  mediaId       String?
+  isActive      Boolean   @default(false)
+  downloadCount Int       @default(0)
+  status        String    @default("PUBLISHED")
+  publishedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+  media         Media?    @relation(fields: [mediaId], references: [id], onDelete: SetNull)
+
+  @@index([slug])
+  @@index([type, isActive])
+  @@index([status])
+}
+
+model OfferLetter {
+  id          String    @id @default(uuid())
+  company     String
+  slug        String    @unique
+  role        String
+  offeredAt   DateTime?
+  displayDate String?
+  description String?
+  mediaId     String?
+  status      String    @default("PUBLISHED")
+  order       Int       @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  media       Media?    @relation(fields: [mediaId], references: [id], onDelete: SetNull)
+
+  @@index([slug])
+  @@index([status])
+  @@index([order])
+}
+
+model Achievement {
+  id          String    @id @default(uuid())
+  title       String
+  slug        String    @unique
+  description String?
+  type        String?
+  year        String?
+  status      String    @default("PUBLISHED")
+  order       Int       @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@index([slug])
+  @@index([status])
+  @@index([order])
+}
+
+model ShowcaseItem {
+  id          String    @id @default(uuid())
+  title       String
+  slug        String    @unique
+  description String?
+  linkUrl     String?
+  mediaId     String?
+  status      String    @default("PUBLISHED")
+  order       Int       @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  media       Media?    @relation(fields: [mediaId], references: [id], onDelete: SetNull)
+
+  @@index([slug])
+  @@index([status])
+  @@index([order])
+}
+
+model Testimonial {
+  id          String    @id @default(uuid())
+  name        String
+  slug        String    @unique
+  role        String?
+  company     String?
+  quote       String
+  avatarUrl   String?
+  status      String    @default("PUBLISHED")
+  order       Int       @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@index([slug])
+  @@index([status])
+  @@index([order])
+}
+
+model Language {
+  id          String    @id @default(uuid())
+  name        String
+  slug        String    @unique
+  level       String?
+  icon        String?
+  category    String?
+  status      String    @default("PUBLISHED")
+  order       Int       @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@index([slug])
+  @@index([category])
+  @@index([status])
+}
+
+model TechTool {
+  id          String    @id @default(uuid())
+  name        String
+  slug        String    @unique
+  category    String
+  icon        String?
+  color       String?
+  status      String    @default("PUBLISHED")
+  order       Int       @default(0)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@index([slug])
+  @@index([category])
+  @@index([status])
+}
+
+model ContactMessage {
+  id             String    @id @default(uuid())
+  name           String
+  email          String
+  company        String?
+  reason         String?
+  message        String
+  ipAddress      String?
+  userAgent      String?
+  submissionHash String?
+  isRead         Boolean   @default(false)
+  isArchived     Boolean   @default(false)
+  isSpam         Boolean   @default(false)
+  repliedAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([email])
+  @@index([isRead, isArchived, isSpam])
+  @@index([createdAt])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  action     String
+  entityType String
+  entityId   String?
+  before     String?
+  after      String?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([action])
+  @@index([createdAt])
+}

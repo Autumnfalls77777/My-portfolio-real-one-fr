@@ -1,0 +1,50 @@
+{
+  "name": "BrandCard",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Brand name shown in the archive list"
+    },
+    "slug": {
+      "type": "string",
+      "description": "Unique URL-safe identifier (e.g. mejwani-masale)"
+    },
+    "collection_id": {
+      "type": "string",
+      "description": "Collection category: 01=BRANDS, 02=CLIENTS, 03=SOCIALS, 04=PRODUCTS, 05=EVENTS",
+      "enum": ["01", "02", "03", "04", "05"],
+      "default": "01"
+    },
+    "year": {
+      "type": "string",
+      "description": "Year of the project (e.g. 2026)"
+    },
+    "works_count": {
+      "type": "integer",
+      "description": "Number of works/deliverables in this brand project"
+    },
+    "brand_type": {
+      "type": "string",
+      "description": "Type of work, e.g. Brand Identity, Social Media, Packaging"
+    },
+    "overview": {
+      "type": "string",
+      "format": "richtext",
+      "description": "Short overview of the brand project"
+    },
+    "role": {
+      "type": "string",
+      "description": "Your role in this project"
+    },
+    "is_hot": {
+      "type": "boolean",
+      "description": "Flag featured/hot brands at the top"
+    },
+    "order": {
+      "type": "integer",
+      "description": "Display order within the collection"
+    }
+  },
+  "required": ["name", "slug", "collection_id"]
+}

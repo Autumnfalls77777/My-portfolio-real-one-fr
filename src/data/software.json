@@ -1,0 +1,9 @@
+{
+  "hero": {
+    "title": "Software Projects",
+    "intro": "A collection of applications, tools, and systems built at the intersection of clean architecture and thoughtful design.",
+    "stats": []
+  },
+  "categories": ["All", "Frontend", "Backend", "AI", "Web", "Desktop"],
+  "sortOptions": ["Newest", "Oldest", "Most Complex"]
+}

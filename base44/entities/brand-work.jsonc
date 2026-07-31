@@ -1,0 +1,37 @@
+{
+  "name": "BrandWork",
+  "type": "object",
+  "properties": {
+    "brand_slug": {
+      "type": "string",
+      "description": "References the slug of the parent BrandCard"
+    },
+    "title": {
+      "type": "string",
+      "description": "Title of this work/deliverable"
+    },
+    "description": {
+      "type": "string",
+      "description": "Short description of this work"
+    },
+    "category": {
+      "type": "string",
+      "description": "Work category, e.g. PACKAGING, SOCIAL MEDIA, BRANDING",
+      "enum": ["PACKAGING", "SOCIAL MEDIA", "BRANDING", "EDITORIAL", "CAMPAIGNS", "TYPOGRAPHY", "EVENTS", "UI/UX", "PRINT", "ILLUSTRATIONS", "REELS", "BANNERS", "LARGE FORMAT", "PRODUCTS"]
+    },
+    "year": {
+      "type": "string",
+      "description": "Year this work was created"
+    },
+    "image_url": {
+      "type": "string",
+      "format": "file",
+      "description": "Image for this work item"
+    },
+    "order": {
+      "type": "integer",
+      "description": "Display order within the brand's works"
+    }
+  },
+  "required": ["brand_slug", "title", "image_url"]
+}

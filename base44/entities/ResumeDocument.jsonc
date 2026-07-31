@@ -1,0 +1,25 @@
+﻿{
+  "name": "ResumeDocument",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "file_url": {
+      "type": "string",
+      "format": "file_url"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "Resume",
+        "CV"
+      ]
+    }
+  },
+  "required": [
+    "title",
+    "file_url",
+    "type"
+  ]
+}

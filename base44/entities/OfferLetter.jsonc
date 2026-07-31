@@ -1,0 +1,31 @@
+{
+  "name": "OfferLetter",
+  "type": "object",
+  "properties": {
+    "company": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string"
+    },
+    "file_url": {
+      "type": "string",
+      "format": "file_url"
+    },
+    "description": {
+      "type": "string"
+    },
+    "order": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "company",
+    "role",
+    "file_url"
+  ]
+}

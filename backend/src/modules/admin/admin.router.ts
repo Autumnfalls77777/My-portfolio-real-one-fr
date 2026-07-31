@@ -1,0 +1,30 @@
+import { Router } from 'express';
+import { dashboardRouter } from '../dashboard/dashboard.router.js';
+import { adminSoftwareRouter } from '../software/software.router.js';
+import { adminDesignRouter } from '../design/design.router.js';
+import { adminCareerRouter } from '../career/career.router.js';
+import { adminCertificatesRouter } from '../certificates/certificates.router.js';
+import { adminResumesRouter, adminOfferLettersRouter } from '../resumes/resumes.router.js';
+import { adminContactRouter } from '../contact/contact.router.js';
+import { achievements, languages, showcaseItems, techTools, testimonials, brandCards, brandWorks, designCollections } from '../content/content.router.js';
+import { adminSettingsRouter } from '../settings/settings.router.js';
+
+export const adminRouter = Router();
+
+adminRouter.use('/', dashboardRouter);
+adminRouter.use('/software', adminSoftwareRouter);
+adminRouter.use('/designs', adminDesignRouter);
+adminRouter.use('/career', adminCareerRouter);
+adminRouter.use('/certificates', adminCertificatesRouter);
+adminRouter.use('/resumes', adminResumesRouter);
+adminRouter.use('/offer-letters', adminOfferLettersRouter);
+adminRouter.use('/contact-messages', adminContactRouter);
+adminRouter.use('/achievements', achievements.adminRouter);
+adminRouter.use('/showcase', showcaseItems.adminRouter);
+adminRouter.use('/testimonials', testimonials.adminRouter);
+adminRouter.use('/languages', languages.adminRouter);
+adminRouter.use('/tech-tools', techTools.adminRouter);
+adminRouter.use('/brand-cards', brandCards.adminRouter);
+adminRouter.use('/brand-works', brandWorks.adminRouter);
+adminRouter.use('/design-collections', designCollections.adminRouter);
+adminRouter.use('/settings', adminSettingsRouter);

@@ -1,0 +1,89 @@
+{
+  "hero": {
+    "title": "Let's Build Something Amazing Together.",
+    "intro": "Whether you're looking for a designer, a developer, or someone who can do both — I'd love to hear about your project. Let's turn your idea into something worth sharing."
+  },
+  "socials": [
+    {
+      "platform": "Instagram",
+      "username": "@itzpal101",
+      "description": "Daily design experiments, works in progress, and visual inspiration.",
+      "url": "https://instagram.com/itzpal101",
+      "icon": "Instagram",
+      "color": "#E4405F"
+    },
+    {
+      "platform": "GitHub",
+      "username": "@Autumnfalls77777",
+      "description": "Open source projects, code experiments, and developer tools.",
+      "url": "https://github.com/Autumnfalls77777",
+      "icon": "Github",
+      "color": "#0F0F0F"
+    },
+    {
+      "platform": "Discord",
+      "username": "itzpal101",
+      "description": "Connect with me on Discord or join the community server.",
+      "url": "#discord",
+      "icon": "MessageCircle",
+      "color": "#5865F2",
+      "action": "discord-modal"
+    },
+    {
+      "platform": "Email",
+      "username": "prabaljaiswal69420@gmail.com",
+      "description": "The best way to reach me for project inquiries and collaborations.",
+      "url": "mailto:prabaljaiswal69420@gmail.com",
+      "icon": "Mail",
+      "color": "#C49A6C"
+    },
+    {
+      "platform": "LinkedIn",
+      "username": "Not Available",
+      "description": "Currently not available. Please reach out via Email, Instagram, or Discord!",
+      "url": "#linkedin",
+      "icon": "Linkedin",
+      "color": "#0A66C2",
+      "action": "linkedin-modal"
+    }
+  ],
+  "formReasons": [
+    "Graphic Design Project",
+    "UI/UX Design",
+    "Branding",
+    "Packaging Design",
+    "Software Development",
+    "Freelance Opportunity",
+    "Internship",
+    "Full-Time Opportunity",
+    "Collaboration",
+    "Speaking/Event Invitation",
+    "Others"
+  ],
+  "faq": [
+    {
+      "question": "Are you available for freelance work?",
+      "answer": "Yes! I take on a limited number of freelance projects each quarter. I'm most excited about projects that bridge design and development — branding systems, web applications, and interactive experiences. Reach out with your project details and I'll get back to you within 48 hours."
+    },
+    {
+      "question": "Do you accept internships?",
+      "answer": "Absolutely. I'm always looking to learn from experienced teams and contribute to meaningful work. I'm particularly interested in internships at the intersection of design and engineering — product teams, creative agencies, and design-forward tech companies."
+    },
+    {
+      "question": "How quickly do you respond?",
+      "answer": "I typically respond to all inquiries within 24-48 hours. For urgent project inquiries, mentioning 'URGENT' in the subject line will get a faster response. I respect your time and will always follow up, even if I'm not the right fit for your project."
+    },
+    {
+      "question": "Can I hire you remotely?",
+      "answer": "Yes, I work remotely with clients and teams around the world. I'm experienced with async communication, collaborative tools (Figma, GitHub, Slack), and managing projects across time zones. I'm also open to hybrid arrangements if you're based locally."
+    },
+    {
+      "question": "What's your typical project timeline?",
+      "answer": "Timelines vary by scope: branding projects take 4-6 weeks, web applications 6-12 weeks, and smaller design tasks 1-2 weeks. I'll provide a detailed timeline during our initial conversation, with milestones and deliverables clearly outlined."
+    },
+    {
+      "question": "Do you work with startups and small businesses?",
+      "answer": "Definitely. Some of my best work has been with early-stage startups and small businesses. I understand budget constraints and can offer flexible engagement models, including phased approaches that spread investment over time."
+    }
+  ]
+}
