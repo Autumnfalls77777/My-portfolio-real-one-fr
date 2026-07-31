@@ -81,7 +81,6 @@ export default function HeroSection() {
   }, []);
 
   const handleDragEnd = (key, info) => {
-    if (!isAdminUser) return;
     const offsetX = Math.round(info.offset.x);
     const offsetY = Math.round(info.offset.y);
 
@@ -89,15 +88,21 @@ export default function HeroSection() {
 
     setPositions((prev) => {
       const current = prev[key] || { x: 0, y: 0 };
-      return {
+      const updated = {
         ...prev,
         [key]: {
           x: current.x + offsetX,
           y: current.y + offsetY,
         },
       };
+      try {
+        localStorage.setItem('portfolio_card_positions', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
     });
-    setHasUnsavedChanges(true);
+    if (isAdminUser) {
+      setHasUnsavedChanges(true);
+    }
   };
 
   const handleSavePositions = async () => {
@@ -208,8 +213,8 @@ export default function HeroSection() {
 
               {/* Spotify Card */}
               <motion.div
-                className={`absolute -top-4 -right-8 z-20 ${isAdminUser ? 'cursor-grab active:cursor-grabbing' : ''}`}
-                drag={isAdminUser}
+                className="absolute -top-4 -right-8 z-20 cursor-grab active:cursor-grabbing select-none"
+                drag={true}
                 dragMomentum={false}
                 dragElastic={0}
                 initial={false}
@@ -227,8 +232,8 @@ export default function HeroSection() {
 
               {/* Discord Card */}
               <motion.div
-                className={`absolute bottom-28 -right-12 z-20 ${isAdminUser ? 'cursor-grab active:cursor-grabbing' : ''}`}
-                drag={isAdminUser}
+                className="absolute bottom-28 -right-12 z-20 cursor-grab active:cursor-grabbing select-none"
+                drag={true}
                 dragMomentum={false}
                 dragElastic={0}
                 initial={false}
@@ -246,8 +251,8 @@ export default function HeroSection() {
 
               {/* Current Project Widget */}
               <motion.div
-                className={`absolute top-52 left-16 z-20 ${isAdminUser ? 'cursor-grab active:cursor-grabbing' : ''}`}
-                drag={isAdminUser}
+                className="absolute top-52 left-16 z-20 cursor-grab active:cursor-grabbing select-none"
+                drag={true}
                 dragMomentum={false}
                 dragElastic={0}
                 initial={false}
@@ -265,8 +270,8 @@ export default function HeroSection() {
 
               {/* GitHub Card */}
               <motion.div
-                className={`absolute top-24 left-2 z-20 ${isAdminUser ? 'cursor-grab active:cursor-grabbing' : ''}`}
-                drag={isAdminUser}
+                className="absolute top-24 left-2 z-20 cursor-grab active:cursor-grabbing select-none"
+                drag={true}
                 dragMomentum={false}
                 dragElastic={0}
                 initial={false}
@@ -284,8 +289,8 @@ export default function HeroSection() {
 
               {/* Steam Card */}
               <motion.div
-                className={`absolute bottom-24 -left-24 z-20 ${isAdminUser ? 'cursor-grab active:cursor-grabbing' : ''}`}
-                drag={isAdminUser}
+                className="absolute bottom-24 -left-24 z-20 cursor-grab active:cursor-grabbing select-none"
+                drag={true}
                 dragMomentum={false}
                 dragElastic={0}
                 initial={false}
