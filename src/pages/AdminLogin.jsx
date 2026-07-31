@@ -4,9 +4,9 @@ import { loginAdmin } from '@/lib/adminAuth';
 import { Lock, Mail, ArrowLeft, Eye, EyeOff, KeyRound, ShieldCheck } from 'lucide-react';
 
 export default function AdminLogin() {
-  const [email, setEmail] = useState('prabaljaiswal69420@gmail.com');
-  const [password, setPassword] = useState('prabal@123');
-  const [accessCode, setAccessCode] = useState('prabal_admin_access_2026');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [accessCode, setAccessCode] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
