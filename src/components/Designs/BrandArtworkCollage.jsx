@@ -157,12 +157,20 @@ export default function BrandArtworkCollage({ brand }) {
           </span>
         </div>
 
-        {/* Embedded Thumbnail Strip */}
-        <div className="px-5 sm:px-6 py-3.5 bg-[#FAF4ED]">
+        {/* Embedded Thumbnail Grid - Wraps photos into clean rows below */}
+        <div className="px-5 sm:px-6 py-4 bg-[#FAF4ED] border-t border-[#EDE4D6]">
+          <div className="flex items-center justify-between mb-2.5">
+            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-obsidian/40">
+              ARTWORK GALLERY ({total} WORKS)
+            </span>
+            <span className="text-[10px] font-mono text-obsidian/40">
+              Click photo to select
+            </span>
+          </div>
+
           <div
             ref={stripRef}
-            style={{ display: 'flex', flexDirection: 'row', gap: '10px', overflowX: 'auto', paddingBottom: '4px' }}
-            className="brown-scrollbar"
+            className="flex flex-wrap gap-2.5 max-h-[220px] overflow-y-auto pr-1 brown-scrollbar"
           >
             {works.map((work, idx) => {
               const isActive = idx === activeIdx;
@@ -170,30 +178,29 @@ export default function BrandArtworkCollage({ brand }) {
                 <button
                   key={work.id || idx}
                   onClick={() => setActiveIdx(idx)}
+                  className="relative flex-shrink-0 w-20 h-14 sm:w-22 sm:h-16 rounded-xl overflow-hidden cursor-pointer transition-all duration-200 group"
                   style={{
-                    flexShrink: 0,
-                    width: '84px',
-                    height: '60px',
-                    borderRadius: '8px',
-                    overflow: 'hidden',
-                    cursor: 'pointer',
-                    padding: 0,
-                    background: 'white',
-                    // Active: thick brown border + outer glow ring
                     border: isActive ? `3px solid ${ACCENT}` : '2px solid #E5DCCE',
                     boxShadow: isActive
-                      ? `0 0 0 3px ${ACCENT}55, 0 2px 8px rgba(196,154,108,0.30)`
+                      ? `0 0 0 3px ${ACCENT}44, 0 2px 8px rgba(196,154,108,0.30)`
                       : '0 1px 3px rgba(0,0,0,0.06)',
-                    transform: isActive ? 'scale(1.06)' : 'scale(1)',
-                    transition: 'all 0.18s ease',
+                    transform: isActive ? 'scale(1.05)' : 'scale(1)',
+                    background: 'white',
                   }}
                 >
                   <img
                     src={work.image || work.image_url}
                     alt={work.title}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    className="w-full h-full object-cover block"
                     loading="lazy"
                   />
+                  <span
+                    className={`absolute bottom-1 right-1 px-1.5 py-0.5 text-[9px] font-mono font-bold rounded ${
+                      isActive ? 'bg-[#C49A6C] text-white' : 'bg-black/60 text-white/90'
+                    }`}
+                  >
+                    {idx + 1}
+                  </span>
                 </button>
               );
             })}
