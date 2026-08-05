@@ -195,65 +195,11 @@ const getInitialData = (entityName) => {
         }
       ]);
     case 'BrandCard':
-      return getOrSeed(entityName, () =>
-        brandsData.map((b, i) => ({
-          id: `bc-${b.id || b.slug}`,
-          name: b.name,
-          slug: b.slug,
-          collection_id: b.collectionId || '01',
-          year: b.year || '2026',
-          works_count: b.worksCount || 0,
-          brand_type: b.type || b.brandType || 'Brand Identity',
-          role: b.role || 'Lead Designer',
-          overview: b.overview || '',
-          is_hot: b.isHot || false,
-          order: i,
-        }))
-      );
+      return getOrSeed(entityName, () => []);
     case 'BrandWork':
-      return getOrSeed(entityName, () => {
-        const works = [];
-        brandsData.forEach(b => {
-          (b.allWorks || []).forEach((w, i) => {
-            works.push({
-              id: w.id || `bw-${b.slug}-${i}`,
-              brand_slug: b.slug,
-              title: w.title,
-              description: w.description || '',
-              category: w.category || 'BRANDING',
-              year: w.year || b.year || '2026',
-              image_url: w.image || w.imageUrl || '',
-              order: i,
-            });
-          });
-        });
-        return works;
-      });
+      return getOrSeed(entityName, () => []);
     case 'DesignProject':
-      return getOrSeed(entityName, () => {
-        const catMap = {
-          PACKAGING: 'Packaging', 'SOCIAL MEDIA': 'Social Media', BRANDING: 'Branding',
-          CAMPAIGNS: 'Branding', EDITORIAL: 'Print', TYPOGRAPHY: 'Print',
-          EVENTS: 'Branding', 'UI/UX': 'UI/UX', PRINT: 'Print',
-          ILLUSTRATIONS: 'Illustrations', REELS: 'Reels', BANNERS: 'Banners',
-          'LARGE FORMAT': 'Large Format', PRODUCTS: 'Branding',
-        };
-        return brandsData.map((b, i) => ({
-          id: `dp-${b.slug}`,
-          title: b.name,
-          description: b.overview || `Design work for ${b.name}.`,
-          category: catMap[b.stats?.categories?.[0]] || 'Branding',
-          date: b.year || '2026',
-          client: b.name,
-          team_project: false,
-          software_used: ['Photoshop', 'Illustrator', 'Figma'],
-          tags: (b.stats?.categories || []).map(c => catMap[c] || c),
-          thumbnail: b.allWorks?.[0]?.image || '',
-          overview: b.overview || '',
-          personal_note: b.role || '',
-          order: i,
-        }));
-      });
+      return getOrSeed(entityName, () => []);
     case 'SoftwareProject':
       return getOrSeed(entityName, () => []);
     case 'FeaturedProject':
