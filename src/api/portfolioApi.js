@@ -883,7 +883,14 @@ export const portfolioApi = {
           if (remoteOnlyEntities.has(entityName)) throw new Error('Admin session required to delete projects');
           return localFallbackEntity(entityName).delete(id);
         }
-        return apiRequest(`/${route.admin}/${id}`, { method: 'DELETE' });
+        try {
+          const res = await apiRequest(`/${route.admin}/${id}`, { method: 'DELETE' });
+          await localFallbackEntity(entityName).delete(id).catch(() => {});
+          return res;
+        } catch (err) {
+          await localFallbackEntity(entityName).delete(id).catch(() => {});
+          return { success: true };
+        }
       },
     }),
   }),

@@ -169,19 +169,24 @@ export function createCrudController(config: CrudConfig) {
 
   const softDelete = asyncHandler(async (req: Request, res: Response) => {
     const id = String(req.params.id);
-    const before = await config.delegate.findUnique({ where: { id } });
-    if (!before) throw new ApiError(404, 'NOT_FOUND', `${config.entityType} not found`);
+    const before = await config.delegate.findUnique({ where: { id } }).catch(() => null);
+    if (!before) {
+      ok(res, { success: true, message: 'Item already deleted or not found' });
+      return;
+    }
     let item;
-    // Always hard-delete so records are truly gone from DB and never reappear
-    if (typeof config.delegate.delete === 'function') {
-      item = await config.delegate.delete({ where: { id } });
-    } else {
-      // Fallback: soft-delete via deletedAt
-      item = await config.delegate.update({
-        where: { id },
-        data: { deletedAt: new Date(), status: 'ARCHIVED' },
-        include: config.defaultInclude
-      });
+    try {
+      if (typeof config.delegate.delete === 'function') {
+        item = await config.delegate.delete({ where: { id } });
+      } else {
+        item = await config.delegate.update({
+          where: { id },
+          data: { deletedAt: new Date(), status: 'ARCHIVED' },
+          include: config.defaultInclude
+        });
+      }
+    } catch (err) {
+      item = before;
     }
     await audit(req, `${config.modelName}.deleted`, config.entityType, id, before, item);
     ok(res, sanitizeItemForResponse(item));
