@@ -26,7 +26,100 @@ export default function DesignProjectStudio() {
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState('');
   const [uploadingIdx, setUploadingIdx] = useState(null);
+  const [bulkUploadingCount, setBulkUploadingCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // ── MULTIPLE PICTURES FILE UPLOAD ──
+  const handleMultiplePicturesUpload = async (fileList) => {
+    if (!fileList || fileList.length === 0) return;
+    const files = Array.from(fileList);
+    setBulkUploadingCount(files.length);
+
+    // Keep non-empty existing rows
+    const existingValid = projectPictures.filter(p => (p.imageUrl || '').trim() || (p.title || '').trim());
+
+    const newRows = files.map(file => {
+      const nameWithoutExt = file.name.replace(/\.[^/.]+$/, '');
+      const cleanTitle = nameWithoutExt
+        .replace(/[-_]+/g, ' ')
+        .replace(/\b\w/g, c => c.toUpperCase());
+
+      return {
+        title: cleanTitle,
+        category: 'PACKAGING',
+        year: brandForm.year || '2026',
+        imageUrl: '',
+        description: '',
+        file,
+      };
+    });
+
+    const combined = [...existingValid, ...newRows];
+    setProjectPictures(combined);
+
+    let completed = 0;
+    await Promise.all(
+      newRows.map(async (row, i) => {
+        const file = row.file;
+        const targetIdx = existingValid.length + i;
+
+        // Instant local preview
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (e.target?.result) {
+            handlePictureChange(targetIdx, 'imageUrl', e.target.result);
+          }
+        };
+        reader.readAsDataURL(file);
+
+        try {
+          const res = await portfolioApi.integrations.Core.UploadFile({
+            file,
+            folder: 'portfolio/designs',
+            resourceType: 'image',
+          });
+          if (res?.file_url) {
+            handlePictureChange(targetIdx, 'imageUrl', res.file_url);
+          }
+        } catch (err) {
+          console.warn(`[Cloudinary upload failed for ${file.name}]`, err);
+        } finally {
+          completed++;
+          setBulkUploadingCount(files.length - completed);
+        }
+      })
+    );
+    setBulkUploadingCount(0);
+  };
+
+  // ── FILE UPLOAD FOR SINGLE PICTURE ──
+  const handlePictureUpload = (idx, file) => {
+    if (!file) return;
+    setUploadingIdx(idx);
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target?.result;
+      if (dataUrl) {
+        handlePictureChange(idx, 'imageUrl', dataUrl);
+      }
+    };
+    reader.readAsDataURL(file);
+
+    portfolioApi.integrations.Core.UploadFile({
+      file,
+      folder: 'portfolio/designs',
+      resourceType: 'image',
+    }).then(res => {
+      if (res?.file_url) {
+        handlePictureChange(idx, 'imageUrl', res.file_url);
+      }
+    }).catch(err => {
+      console.warn('[Cloudinary upload skipped, using instant Data URL]', err.message);
+    }).finally(() => {
+      setUploadingIdx(null);
+    });
+  };
   const [selectedBrandIds, setSelectedBrandIds] = useState([]);
   const [deletingBulk, setDeletingBulk] = useState(false);
 
@@ -176,37 +269,6 @@ export default function DesignProjectStudio() {
       const next = [...prev];
       next[idx] = { ...next[idx], [field]: value };
       return next;
-    });
-  };
-
-  // ── FILE UPLOAD FOR PICTURE ──
-  const handlePictureUpload = (idx, file) => {
-    if (!file) return;
-    setUploadingIdx(idx);
-
-    // Instant local preview via FileReader
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const dataUrl = e.target?.result;
-      if (dataUrl) {
-        handlePictureChange(idx, 'imageUrl', dataUrl);
-      }
-    };
-    reader.readAsDataURL(file);
-
-    // Attempt background server/Cloudinary upload if available
-    portfolioApi.integrations.Core.UploadFile({
-      file,
-      folder: 'portfolio/designs',
-      resourceType: 'image',
-    }).then(res => {
-      if (res?.file_url) {
-        handlePictureChange(idx, 'imageUrl', res.file_url);
-      }
-    }).catch(err => {
-      console.warn('[Cloudinary upload skipped, using instant Data URL]', err.message);
-    }).finally(() => {
-      setUploadingIdx(null);
     });
   };
 
@@ -705,21 +767,50 @@ export default function DesignProjectStudio() {
 
               {/* ── SECTION 2: PICTURES (ARTWORKS) ── */}
               <div className="space-y-4">
-                <div className="flex items-center justify-between border-b border-sand/60 pb-2">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-sand/60 pb-3">
                   <div>
                     <h4 className="text-xs font-extrabold uppercase tracking-widest text-obsidian/40">
                       2. Project Pictures ({projectPictures.length})
                     </h4>
                     <p className="text-[11px] text-obsidian/40 mt-0.5">
-                      Add images one by one with their own description to fit the artwork viewer.
+                      Select multiple photos at once or add pictures individually.
                     </p>
                   </div>
-                  <button
-                    onClick={addPictureRow}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-obsidian text-white text-xs font-bold rounded-lg hover:bg-charcoal transition-colors uppercase tracking-wider"
-                  >
-                    <Plus size={14} /> Add Picture
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <label className="flex items-center gap-1.5 px-3.5 py-2 bg-[#C49A6C] text-white text-xs font-bold rounded-xl hover:bg-[#B3895B] transition-all shadow-sm cursor-pointer uppercase tracking-wider">
+                      {bulkUploadingCount > 0 ? (
+                        <>
+                          <Loader2 size={14} className="animate-spin" />
+                          <span>Uploading ({bulkUploadingCount} remaining)...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload size={14} />
+                          <span>Upload Multiple Photos</span>
+                        </>
+                      )}
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        className="hidden"
+                        onChange={e => {
+                          if (e.target.files && e.target.files.length > 0) {
+                            handleMultiplePicturesUpload(e.target.files);
+                            e.target.value = '';
+                          }
+                        }}
+                      />
+                    </label>
+
+                    <button
+                      type="button"
+                      onClick={addPictureRow}
+                      className="flex items-center gap-1.5 px-3 py-2 bg-obsidian/10 text-obsidian text-xs font-bold rounded-xl hover:bg-obsidian hover:text-white transition-colors uppercase tracking-wider"
+                    >
+                      <Plus size={14} /> Add Blank Row
+                    </button>
+                  </div>
                 </div>
 
                 <div className="space-y-6">
