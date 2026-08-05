@@ -27,6 +27,47 @@ export default function DesignProjectStudio() {
   const [formError, setFormError] = useState('');
   const [uploadingIdx, setUploadingIdx] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedBrandIds, setSelectedBrandIds] = useState([]);
+  const [deletingBulk, setDeletingBulk] = useState(false);
+
+  const toggleSelectBrand = (id) => {
+    setSelectedBrandIds(prev =>
+      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAllBrands = (itemsToSelect) => {
+    if (selectedBrandIds.length === itemsToSelect.length && itemsToSelect.length > 0) {
+      setSelectedBrandIds([]);
+    } else {
+      setSelectedBrandIds(itemsToSelect.map(b => b.id));
+    }
+  };
+
+  const handleBulkDeleteProjects = async () => {
+    if (selectedBrandIds.length === 0) return;
+    if (!window.confirm(`Delete ${selectedBrandIds.length} selected design project(s) and all their artwork? This cannot be undone.`)) return;
+
+    setDeletingBulk(true);
+    try {
+      const targets = brands.filter(b => selectedBrandIds.includes(b.id));
+      for (const brand of targets) {
+        const cardWorks = works.filter(w => w.brand_slug === brand.slug || w.brandSlug === brand.slug);
+        for (const work of cardWorks) {
+          if (work.id) {
+            await portfolioApi.entities.BrandWork.delete(work.id).catch(() => {});
+          }
+        }
+        await portfolioApi.entities.BrandCard.delete(brand.id).catch(() => {});
+      }
+      setSelectedBrandIds([]);
+      await loadData();
+    } catch (err) {
+      alert('Bulk delete failed: ' + (err.message || 'Error deleting projects'));
+    } finally {
+      setDeletingBulk(false);
+    }
+  };
 
   // Collection Edit / New State
   const [editingCollection, setEditingCollection] = useState(null);
@@ -352,24 +393,52 @@ export default function DesignProjectStudio() {
         )}
       </div>
 
-      {/* Search bar - only on projects tab */}
+      {/* Search & Bulk Select Bar - only on projects tab */}
       {activeTab === 'projects' && (
-        <div className="mb-6 relative">
-          <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-obsidian/30" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Search projects by name, type, collection..."
-            className="w-full pl-11 pr-5 py-3 text-sm bg-white border border-sand/80 rounded-2xl outline-none focus:border-obsidian/40 focus:ring-2 focus:ring-obsidian/5 placeholder:text-obsidian/30 shadow-xs"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-obsidian/30 hover:text-obsidian"
-            >
-              <X size={14} />
-            </button>
+        <div className="mb-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+          <div className="relative flex-1">
+            <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-obsidian/30" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              placeholder="Search projects by name, type, collection..."
+              className="w-full pl-11 pr-5 py-3 text-sm bg-white border border-sand/80 rounded-2xl outline-none focus:border-obsidian/40 focus:ring-2 focus:ring-obsidian/5 placeholder:text-obsidian/30 shadow-xs"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-obsidian/30 hover:text-obsidian"
+              >
+                <X size={14} />
+              </button>
+            )}
+          </div>
+
+          {filteredBrands.length > 0 && (
+            <div className="flex items-center gap-2 self-end sm:self-auto">
+              <button
+                onClick={() => toggleSelectAllBrands(filteredBrands)}
+                className="px-4 py-2.5 bg-white border border-sand/80 rounded-xl text-xs font-semibold text-obsidian/70 hover:text-obsidian hover:bg-sand/30 transition-all shadow-xs"
+              >
+                {selectedBrandIds.length === filteredBrands.length ? 'Deselect All' : 'Select All'}
+              </button>
+
+              {selectedBrandIds.length > 0 && (
+                <button
+                  onClick={handleBulkDeleteProjects}
+                  disabled={deletingBulk}
+                  className="flex items-center gap-2 px-5 py-2.5 bg-red-600 text-white rounded-xl text-xs font-bold hover:bg-red-700 transition-all shadow-md animate-pulse disabled:opacity-50"
+                >
+                  {deletingBulk ? (
+                    <Loader2 size={14} className="animate-spin" />
+                  ) : (
+                    <Trash2 size={14} />
+                  )}
+                  <span>Delete Selected ({selectedBrandIds.length})</span>
+                </button>
+              )}
+            </div>
           )}
         </div>
       )}
@@ -405,11 +474,14 @@ export default function DesignProjectStudio() {
                 const cardWorks = works.filter(w => w.brand_slug === brand.slug || w.brandSlug === brand.slug);
                 const firstPic = cardWorks[0]?.image_url || cardWorks[0]?.imageUrl || '';
                 const colLabel = collections.find(c => (c.code || c.id) === (brand.collection_id || brand.collectionId))?.label || brand.collection_id || '01';
+                const isSelected = selectedBrandIds.includes(brand.id);
 
                 return (
                   <div
                     key={brand.id || i}
-                    className="bg-white border border-sand/80 rounded-2xl p-5 hover:border-obsidian/30 hover:shadow-md transition-all flex flex-col justify-between group"
+                    className={`bg-white border rounded-2xl p-5 hover:shadow-md transition-all flex flex-col justify-between group relative ${
+                      isSelected ? 'border-red-500 ring-2 ring-red-500/20 bg-red-50/10' : 'border-sand/80 hover:border-obsidian/30'
+                    }`}
                   >
                     <div>
                       {/* Image Preview strip */}
@@ -422,9 +494,29 @@ export default function DesignProjectStudio() {
                         <span className="absolute top-3 left-3 px-3 py-1 bg-obsidian/80 backdrop-blur-md text-white text-[10px] font-mono font-bold rounded-full uppercase">
                           Col {brand.collection_id || brand.collectionId || '01'} • {colLabel}
                         </span>
+
+                        {/* Checkbox overlay */}
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); toggleSelectBrand(brand.id); }}
+                          className={`absolute top-3 right-3 w-6 h-6 rounded-lg flex items-center justify-center transition-all shadow-md cursor-pointer ${
+                            isSelected ? 'bg-red-600 text-white' : 'bg-white/90 text-obsidian/40 border border-sand hover:bg-white hover:text-obsidian'
+                          }`}
+                          title={isSelected ? 'Deselect project' : 'Select project for bulk actions'}
+                        >
+                          {isSelected ? '✓' : ''}
+                        </button>
                       </div>
 
-                      <h3 className="font-heading font-bold text-base text-obsidian tracking-wide uppercase truncate">{brand.name}</h3>
+                      <div className="flex items-center justify-between gap-2">
+                        <h3 className="font-heading font-bold text-base text-obsidian tracking-wide uppercase truncate">{brand.name}</h3>
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => toggleSelectBrand(brand.id)}
+                          className="w-4 h-4 rounded text-red-600 accent-red-600 cursor-pointer"
+                        />
+                      </div>
                       <div className="flex items-center gap-2 text-xs text-obsidian/50 mt-1 font-mono">
                         <span>{cardWorks.length} Pictures</span>
                         <span>•</span>

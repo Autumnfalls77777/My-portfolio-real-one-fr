@@ -119,16 +119,21 @@ const camelToSnake = (obj) => {
 // Helper to seed localStorage
 const getOrSeed = (entityName, defaultFactory) => {
   const key = `portfolio_entity_${entityName}`;
+  const seededKey = `portfolio_seeded_${entityName}`;
   const stored = localStorage.getItem(key);
-  if (stored) {
+  const isSeeded = localStorage.getItem(seededKey);
+
+  if (stored !== null || isSeeded === 'true') {
     try {
-      return JSON.parse(stored);
+      return stored ? JSON.parse(stored) : [];
     } catch (e) {
       console.error(`Error parsing ${key}, reseeding`, e);
     }
   }
+
   const data = defaultFactory();
   localStorage.setItem(key, JSON.stringify(data));
+  localStorage.setItem(seededKey, 'true');
   return data;
 };
 
