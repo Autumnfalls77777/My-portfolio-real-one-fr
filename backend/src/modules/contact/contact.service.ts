@@ -75,27 +75,46 @@ Graphic Designer • Full-Stack Developer
 This is an automated confirmation email to let you know your message has been delivered successfully and Prabal has been notified. No further action is required from your side.
   `.trim();
 
-  const fromAddress = env.FROM_EMAIL || `"Prabal Jaiswal" <prabaljaiswal69420@gmail.com>`;
+  const smtpSender = process.env.SMTP_USER || 'prabaljaiswal69420@gmail.com';
+  const fromAddress = env.FROM_EMAIL && !env.FROM_EMAIL.includes('resend.dev')
+    ? env.FROM_EMAIL
+    : `"Prabal Jaiswal" <${smtpSender}>`;
 
   // ── A. Send via Nodemailer SMTP if configured ──
   if (transporter && process.env.SMTP_USER && process.env.SMTP_PASS) {
     try {
-      await transporter.sendMail({
-        from: fromAddress,
-        to: adminTargetEmail,
-        subject: adminSubject,
-        text: adminBody,
-      });
-      logger.info(`Sent inquiry alert to ${adminTargetEmail} via SMTP`);
+      const [adminRes, recipRes] = await Promise.allSettled([
+        transporter.sendMail({
+          from: fromAddress,
+          to: adminTargetEmail,
+          replyTo: message.email,
+          subject: adminSubject,
+          text: adminBody,
+        }),
+        transporter.sendMail({
+          from: fromAddress,
+          to: message.email,
+          subject: recipientSubject,
+          text: recipientBody,
+        }),
+      ]);
 
-      await transporter.sendMail({
-        from: fromAddress,
-        to: message.email,
-        subject: recipientSubject,
-        text: recipientBody,
-      });
-      logger.info(`Sent confirmation email to ${message.email} via SMTP`);
-      return;
+      let sentCount = 0;
+      if (adminRes.status === 'fulfilled') {
+        logger.info(`Sent inquiry alert to ${adminTargetEmail} via SMTP`);
+        sentCount++;
+      } else {
+        logger.error({ err: adminRes.reason }, `Failed sending inquiry alert to ${adminTargetEmail} via SMTP`);
+      }
+
+      if (recipRes.status === 'fulfilled') {
+        logger.info(`Sent confirmation email to ${message.email} via SMTP`);
+        sentCount++;
+      } else {
+        logger.error({ err: recipRes.reason }, `Failed sending confirmation email to ${message.email} via SMTP`);
+      }
+
+      if (sentCount > 0) return;
     } catch (err) {
       logger.error({ err }, 'SMTP email dispatch failed');
     }
@@ -104,21 +123,39 @@ This is an automated confirmation email to let you know your message has been de
   // ── B. Send via Resend API if key is set ──
   if (resend && process.env.RESEND_API_KEY) {
     try {
-      await resend.emails.send({
-        from: env.FROM_EMAIL,
-        to: adminTargetEmail,
-        subject: adminSubject,
-        text: adminBody,
-      });
+      const resendFrom = env.FROM_EMAIL || 'Portfolio <onboarding@resend.dev>';
+      const [adminRes, recipRes] = await Promise.allSettled([
+        resend.emails.send({
+          from: resendFrom,
+          to: adminTargetEmail,
+          replyTo: message.email,
+          subject: adminSubject,
+          text: adminBody,
+        }),
+        resend.emails.send({
+          from: resendFrom,
+          to: message.email,
+          subject: recipientSubject,
+          text: recipientBody,
+        }),
+      ]);
 
-      await resend.emails.send({
-        from: env.FROM_EMAIL,
-        to: message.email,
-        subject: recipientSubject,
-        text: recipientBody,
-      });
-      logger.info(`Sent emails via Resend to ${adminTargetEmail} and ${message.email}`);
-      return;
+      let sentCount = 0;
+      if (adminRes.status === 'fulfilled') {
+        logger.info(`Sent inquiry alert to ${adminTargetEmail} via Resend`);
+        sentCount++;
+      } else {
+        logger.error({ err: adminRes.reason }, `Failed sending inquiry alert to ${adminTargetEmail} via Resend`);
+      }
+
+      if (recipRes.status === 'fulfilled') {
+        logger.info(`Sent confirmation email to ${message.email} via Resend`);
+        sentCount++;
+      } else {
+        logger.error({ err: recipRes.reason }, `Failed sending confirmation email to ${message.email} via Resend`);
+      }
+
+      if (sentCount > 0) return;
     } catch (err) {
       logger.error({ err }, 'Resend email dispatch failed');
     }

@@ -29,6 +29,19 @@ const queryClient = new QueryClient({
 });
 
 export default function App() {
+  React.useEffect(() => {
+    const apiBase = import.meta.env.VITE_API_BASE_URL || '/api/v1';
+    const healthUrl = apiBase.includes('/api/v1') ? apiBase.replace(/\/api\/v1\/?$/, '/health') : '/health';
+
+    const pingBackendAndDb = () => {
+      fetch(healthUrl, { method: 'GET', cache: 'no-store' }).catch(() => {});
+    };
+
+    pingBackendAndDb();
+    const intervalId = setInterval(pingBackendAndDb, 5000);
+    return () => clearInterval(intervalId);
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>

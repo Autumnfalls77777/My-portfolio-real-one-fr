@@ -852,12 +852,7 @@ export const portfolioApi = {
             reason: data.reason || null,
             message: data.message,
           };
-          try {
-            return await apiRequest('/contact', { method: 'POST', body: payload });
-          } catch (err) {
-            console.warn('[ContactMessage backend API warning, falling back to local store]', err.message);
-            return localFallbackEntity(entityName).create(data);
-          }
+          return await apiRequest('/contact', { method: 'POST', body: payload });
         }
         const route = entityRoutes[entityName];
         if (!route || !isAdminSessionActive()) {
