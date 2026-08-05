@@ -42,108 +42,42 @@ async function main() {
   }
   console.log(`✓ Seeded Default Collections`);
 
-  // Seed Brand Cards & Brand Works
-  for (let i = 0; i < brandsData.length; i++) {
-    const b = brandsData[i];
-    await prisma.brandCard.upsert({
-      where: { slug: b.slug },
-      update: {
-        name: b.name,
-        collectionId: b.collectionId || '01',
-        year: b.year || '2026',
-        worksCount: b.worksCount || 0,
-        brandType: b.type || 'Brand Identity',
-        role: b.role || 'Lead Designer',
-        overview: b.overview || '',
-        isHot: Boolean(b.isHot),
-        order: i,
-      },
-      create: {
-        name: b.name,
-        slug: b.slug,
-        collectionId: b.collectionId || '01',
-        year: b.year || '2026',
-        worksCount: b.worksCount || 0,
-        brandType: b.type || 'Brand Identity',
-        role: b.role || 'Lead Designer',
-        overview: b.overview || '',
-        isHot: Boolean(b.isHot),
-        order: i,
-        status: 'PUBLISHED',
-      },
-    });
+  // Clean up all old sample/demo projects from database
+  const sampleSlugs = [
+    'mejwani-masale', 'velocity-motors', 'aura-cosmetics', 'horizon-craft',
+    'pulse-energy', 'nova-dynamics', 'kaleido-creative', 'designathon-26',
+    'global-design-expo', 'techsummit-2026', 'music-fest-stage',
+    'future-vision-forum', 'indie-dev-con', 'sponsers-poster'
+  ];
 
-    // Brand works
-    const works = b.allWorks || [];
-    for (let j = 0; j < works.length; j++) {
-      const w = works[j];
-      const workId = w.id || `bw-${b.slug}-${j}`;
-      const existing = await prisma.brandWork.findFirst({ where: { id: workId } });
-      if (!existing) {
-        await prisma.brandWork.create({
-          data: {
-            id: workId,
-            brandSlug: b.slug,
-            title: w.title,
-            description: w.description || '',
-            category: w.category || 'BRANDING',
-            year: w.year || b.year || '2026',
-            imageUrl: w.image || '',
-            order: j,
-            status: 'PUBLISHED',
-          },
-        });
-      }
+  await prisma.brandWork.deleteMany({
+    where: {
+      OR: [
+        { brandSlug: { in: sampleSlugs } },
+        { id: { startsWith: 'bw-' } }
+      ]
     }
-  }
-  console.log(`✓ Seeded ${brandsData.length} Brand Cards and their works`);
+  }).catch(() => {});
 
-  // Seed Design Projects from brandsData
-  const catMap: Record<string, string> = {
-    PACKAGING: 'Packaging',
-    'SOCIAL MEDIA': 'Social Media',
-    BRANDING: 'Branding',
-    CAMPAIGNS: 'Branding',
-    EDITORIAL: 'Print',
-    TYPOGRAPHY: 'Print',
-    EVENTS: 'Branding',
-    'UI/UX': 'UI/UX',
-    PRINT: 'Print',
-    ILLUSTRATIONS: 'Illustrations',
-    REELS: 'Reels',
-    BANNERS: 'Banners',
-    'LARGE FORMAT': 'Large Format',
-    PRODUCTS: 'Branding',
-  };
+  await prisma.brandCard.deleteMany({
+    where: {
+      OR: [
+        { slug: { in: sampleSlugs } },
+        { id: { startsWith: 'bc-' } }
+      ]
+    }
+  }).catch(() => {});
 
-  for (let i = 0; i < brandsData.length; i++) {
-    const b = brandsData[i];
-    await prisma.designProject.upsert({
-      where: { slug: b.slug },
-      update: {
-        title: b.name,
-        description: b.overview || `Design work for ${b.name}.`,
-        category: catMap[b.stats?.categories?.[0] || 'BRANDING'] || 'Branding',
-        client: b.name,
-        thumbnailUrl: b.allWorks?.[0]?.image || '',
-        order: i,
-        status: 'PUBLISHED',
-      },
-      create: {
-        title: b.name,
-        slug: b.slug,
-        description: b.overview || `Design work for ${b.name}.`,
-        category: catMap[b.stats?.categories?.[0] || 'BRANDING'] || 'Branding',
-        client: b.name,
-        softwareUsed: JSON.stringify(['Photoshop', 'Illustrator', 'Figma']),
-        tags: JSON.stringify((b.stats?.categories || []).map((c: string) => catMap[c] || c)),
-        thumbnailUrl: b.allWorks?.[0]?.image || '',
-        order: i,
-        status: 'PUBLISHED',
-      },
-    });
-  }
-  console.log(`✓ Seeded ${brandsData.length} Design Projects`);
+  await prisma.designProject.deleteMany({
+    where: {
+      OR: [
+        { slug: { in: sampleSlugs } },
+        { id: { startsWith: 'dp-' } }
+      ]
+    }
+  }).catch(() => {});
+
+  console.log(`✓ Purged old sample projects from database`);
 
   // Seed Languages
   if (content.programming) {

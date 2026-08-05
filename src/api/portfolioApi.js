@@ -116,25 +116,47 @@ const camelToSnake = (obj) => {
   return obj;
 };
 
+const SAMPLE_SLUGS = new Set([
+  'mejwani-masale', 'velocity-motors', 'aura-cosmetics', 'horizon-craft',
+  'pulse-energy', 'nova-dynamics', 'kaleido-creative', 'designathon-26',
+  'global-design-expo', 'techsummit-2026', 'music-fest-stage',
+  'future-vision-forum', 'indie-dev-con', 'sponsers-poster'
+]);
+
+const filterOutSampleItems = (items) => {
+  if (!Array.isArray(items)) return [];
+  return items.filter(item => {
+    if (!item) return false;
+    const idStr = String(item.id || '');
+    const slugStr = String(item.slug || item.brand_slug || item.brandSlug || '').toLowerCase();
+    if (idStr.startsWith('bc-') || idStr.startsWith('bw-') || idStr.startsWith('dp-')) return false;
+    if (SAMPLE_SLUGS.has(slugStr)) return false;
+    return true;
+  });
+};
+
 // Helper to seed localStorage
 const getOrSeed = (entityName, defaultFactory) => {
   const key = `portfolio_entity_${entityName}`;
   const seededKey = `portfolio_seeded_${entityName}`;
   const stored = localStorage.getItem(key);
-  const isSeeded = localStorage.getItem(seededKey);
 
-  if (stored !== null || isSeeded === 'true') {
+  if (stored !== null) {
     try {
-      return stored ? JSON.parse(stored) : [];
+      const parsed = JSON.parse(stored);
+      const clean = filterOutSampleItems(parsed);
+      localStorage.setItem(key, JSON.stringify(clean));
+      localStorage.setItem(seededKey, 'true');
+      return clean;
     } catch (e) {
-      console.error(`Error parsing ${key}, reseeding`, e);
+      console.error(`Error parsing ${key}`, e);
     }
   }
 
-  const data = defaultFactory();
-  localStorage.setItem(key, JSON.stringify(data));
+  const cleanData = filterOutSampleItems(defaultFactory());
+  localStorage.setItem(key, JSON.stringify(cleanData));
   localStorage.setItem(seededKey, 'true');
-  return data;
+  return cleanData;
 };
 
 const getInitialData = (entityName) => {
@@ -782,16 +804,16 @@ export const portfolioApi = {
     get: (target, entityName) => ({
       list: async (orderBy, limit = 100) => {
         const route = entityRoutes[entityName];
-        if (!route) return localFallbackEntity(entityName).list(orderBy, limit);
+        if (!route) return filterOutSampleItems(localFallbackEntity(entityName).list(orderBy, limit));
         const useAdmin = isAdminSessionActive();
         const endpoint = useAdmin ? route.admin : route.public;
         const sort = backendSort(orderBy);
         try {
           const data = await apiRequest(`/${endpoint}?limit=${limit}&sort=${encodeURIComponent(sort)}`);
-          return normalizeList(entityName, data);
+          return filterOutSampleItems(normalizeList(entityName, data));
         } catch (error) {
           if (useAdmin || remoteOnlyEntities.has(entityName)) throw error;
-          return localFallbackEntity(entityName).list(orderBy, limit);
+          return filterOutSampleItems(localFallbackEntity(entityName).list(orderBy, limit));
         }
       },
       create: async (data) => {
