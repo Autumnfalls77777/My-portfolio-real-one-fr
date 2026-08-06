@@ -28,6 +28,12 @@ services:
         generateValue: true
       - key: ADMIN_ACCESS_CODE
         sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        value: dt5kagxch
+      - key: CLOUDINARY_API_KEY
+        value: "211187218299895"
+      - key: CLOUDINARY_API_SECRET
+        value: CJJajcAu53StdkIBFNOv-jeu2BU
 
 databases:
   - name: portfolio-db

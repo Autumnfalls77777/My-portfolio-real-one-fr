@@ -870,44 +870,64 @@ export const portfolioApi = {
     Core: {
       UploadFile: async ({ file, folder = 'portfolio/gallery', resourceType = 'auto' }) => {
         if (!file) return { file_url: '', media_id: null };
-        const signature = await apiRequest('/media/signature', {
-          method: 'POST',
-          body: { folder, resourceType },
-        });
-        const uploadBody = new FormData();
-        uploadBody.append('file', file);
-        uploadBody.append('api_key', signature.apiKey);
-        uploadBody.append('timestamp', String(signature.timestamp));
-        uploadBody.append('folder', signature.folder);
-        uploadBody.append('signature', signature.signature);
+        try {
+          const signature = await apiRequest('/media/signature', {
+            method: 'POST',
+            body: { folder, resourceType },
+          });
+          const uploadBody = new FormData();
+          uploadBody.append('file', file);
+          uploadBody.append('api_key', signature.apiKey);
+          uploadBody.append('timestamp', String(signature.timestamp));
+          uploadBody.append('folder', signature.folder);
+          uploadBody.append('signature', signature.signature);
 
-        const uploadResponse = await fetch(
-          `https://api.cloudinary.com/v1_1/${signature.cloudName}/${resourceType}/upload`,
-          { method: 'POST', body: uploadBody }
-        );
-        const uploaded = await uploadResponse.json().catch(() => null);
-        if (!uploadResponse.ok) {
-          throw new Error(uploaded?.error?.message || 'File upload failed');
+          const uploadResponse = await fetch(
+            `https://api.cloudinary.com/v1_1/${signature.cloudName}/${resourceType}/upload`,
+            { method: 'POST', body: uploadBody }
+          );
+          const uploaded = await uploadResponse.json().catch(() => null);
+          if (!uploadResponse.ok) {
+            throw new Error(uploaded?.error?.message || 'File upload failed');
+          }
+
+          const resourceMap = { image: 'IMAGE', video: 'VIDEO', raw: 'RAW' };
+          let mediaId = null;
+          try {
+            const media = await apiRequest('/media', {
+              method: 'POST',
+              body: {
+                cloudinaryId: uploaded.public_id,
+                url: uploaded.url,
+                secureUrl: uploaded.secure_url,
+                resourceType: resourceMap[uploaded.resource_type] || 'AUTO',
+                format: uploaded.format || null,
+                mimeType: file.type || null,
+                width: uploaded.width || null,
+                height: uploaded.height || null,
+                bytes: uploaded.bytes || null,
+                duration: uploaded.duration || null,
+                folder,
+              },
+            });
+            mediaId = media?.id || null;
+          } catch (dbErr) {
+            console.warn('Media record creation skipped:', dbErr);
+          }
+          return { file_url: uploaded.secure_url, media_id: mediaId };
+        } catch (err) {
+          console.warn('Cloudinary upload failed, using Data URL fallback:', err);
+          if (file.type && file.type.startsWith('image/')) {
+            const dataUrl = await new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result);
+              reader.onerror = reject;
+              reader.readAsDataURL(file);
+            });
+            return { file_url: dataUrl, media_id: null };
+          }
+          throw err;
         }
-
-        const resourceMap = { image: 'IMAGE', video: 'VIDEO', raw: 'RAW' };
-        const media = await apiRequest('/media', {
-          method: 'POST',
-          body: {
-            cloudinaryId: uploaded.public_id,
-            url: uploaded.url,
-            secureUrl: uploaded.secure_url,
-            resourceType: resourceMap[uploaded.resource_type] || 'AUTO',
-            format: uploaded.format || null,
-            mimeType: file.type || null,
-            width: uploaded.width || null,
-            height: uploaded.height || null,
-            bytes: uploaded.bytes || null,
-            duration: uploaded.duration || null,
-            folder,
-          },
-        });
-        return { file_url: uploaded.secure_url, media_id: media.id };
       },
     },
     steam: {

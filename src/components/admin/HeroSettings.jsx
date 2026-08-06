@@ -83,10 +83,10 @@ export default function HeroSettings() {
           <div>
             <label className="mb-2 block text-xs font-semibold uppercase tracking-widest text-obsidian/50">Photo URL</label>
             <input
-              type="url"
+              type="text"
               value={heroImageUrl}
               onChange={(event) => setHeroImageUrl(event.target.value)}
-              placeholder="https://…"
+              placeholder="https://… or image URL"
               className="w-full rounded-xl border border-sand bg-[#F9F8F6] px-4 py-3 text-sm text-obsidian outline-none transition focus:border-indigo focus:ring-2 focus:ring-indigo/10"
             />
             <p className="mt-2 text-xs text-obsidian/35">Paste a permanent HTTPS image URL, or upload through Cloudinary below.</p>
